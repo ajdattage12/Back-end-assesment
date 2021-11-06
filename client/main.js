@@ -1,81 +1,95 @@
-let complimentButton = document.getElementById("complimentButton")
+let complimentButton = document.getElementById("complimentButton");
 document.getElementById("complimentButton").onclick = function () {
-    axios.get("http://localhost:4000/api/compliment/")
-        .then(function (response) {
-          const data = response.data;
-          alert(data);
-        });
+  axios.get("http://localhost:4000/api/compliment/").then(function (response) {
+    const data = response.data;
+    alert(data);
+  });
 };
 
-let fotuneButton = document.getElementById("fortuneButton").onclick = function (){
-    axios.get("http://localhost:4000/api/fortune")
-        .then(function (response){
-            const data = response.data;
-            alert(data);
+let fotuneButton = (document.getElementById("fortuneButton").onclick =
+  function () {
+    axios.get("http://localhost:4000/api/fortune").then(function (response) {
+      const data = response.data;
+      alert(data);
+    });
+  });
+
+let inspirationButton = (document.getElementById("inspirationButton").onclick =
+  function () {
+    axios
+      .get("http://localhost:4000/api/inspiration")
+      .then(function (response) {
+        const inspirationDisplay = document.getElementById("inspirational-quotes");
+        const inspirationList = document.createElement("ul");
+        const inspirationQuotes = response.data;
+        inspirationQuotes.forEach(quote => {
+            const quoteItem = document.createElement("li");
+            quoteItem.textContent = quote
+            inspirationList.appendChild(quoteItem)
         });
+        inspirationDisplay.replaceChildren(inspirationList)
+      });
+  });
 
-};
-
-let encouragementButton = document.getElementById("encouragementButton").onclick = function(){
-    axios.get("http://localhost:4000/api/encouragement")
-        .then(function (response){
-            const data = response.data;
-            alert(data);
-        });
-};
-
-let inspirationButton = document.getElementById("inspirationButton").onclick = function(){
-    axios.get("http://localhost:4000/api/inspiration")
-        .then(function(response){
-            const data = response.data;
-            alert(data);
-        });
-};
-
-const goalsContainer= document.querySelector('#goals-container')
-const form = document.querySelector('form')
-
-let goalButton = document.getElementById("postGoal").onclick = function(){
-    axios.put("http://localhost:4000/api/goals")
-        .then(function(response){
-            const data = response.data;
-            alert(data);
-        });
-};
-
-const goalCallback = ({ data : goal }) => displayGoal(goal)
-const errCallback = err => console.log(err)
-
-const createGoal = body => axios.post("http://localhost:4000/api/goals", body)
-        .then(goalCallback).catch(errCallback)
-        // console.log("Is this working?")
-
-function submitHandler(e){
-    e.preventdefault()
-    let goals = document.querySelector('#postgoal')
-    let bodyObj ={
-        goals : goals.value,
+const updateGoals = () => {
+  axios.get("http://localhost:4000/api/goals").then((response) => {
+    const goals = response.data;
+    const goalDisplay = document.getElementById("goal-display");
+    const goalList = document.createElement("ul");
+    const goalSelect = document.getElementById('goals-modify');
+    while(goalSelect.firstChild){
+        goalSelect.removeChild(goalSelect.firstChild);
     }
-    createGoal(bodyObj)
-    goals.value = ''
-    // console.log("Is this working?")
-}
+    goals.forEach((goal) => {
+      const goalItem = document.createElement("li");
+      goalItem.textContent = goal;
+      goalList.appendChild(goalItem);
+      const goalOption = document.createElement('option');
+      goalOption.value = goal;
+      goalOption.textContent = goal;
+      goalSelect.appendChild(goalOption);
+    });
+    goalDisplay.replaceChildren(goalList);
+  });
+};
 
-function createGoalCard(goal) {
-    const goalCard = document.createElement('div')
-    goalCard.classList.add('goal-card')
-    goalCard.innerHTML = `<p class = "goals"> ${goal.goals}></p>`
-    goalsContainer.appendChild(createGoalCard)
-    // console.log("working?")
-}
+const submitGoalButton = (document.getElementById("submitGoalButton").onclick =
+  function (event) {
+    event.preventDefault();
+    const goalText = document.getElementById('goals').value;
+    axios.post("http://localhost:4000/api/goals", {
+        goals: [goalText]
+    }).then((response) => {
+      alert("Goal added!");
+      updateGoals();
+    });
+  });
 
-function displayGoal(arr) {
-    goalsContainer.innerHTML = ``
-    for (let i = 0; i < arr.length; i++) {
-        createGoalCard(arr[i])
-        //console.log("Working?")
-    }
-}
-// console.log("Working?")
-form.addEventListener('submit', submitHandler)
+const modifyGoalButton = (document.getElementById("modifyGoalButton").onclick =
+  function (event) {
+      event.preventDefault();
+    const goalText = document.getElementById('goals').value;
+    const selectGoal = document.getElementById('goals-modify').value;
+    axios.put("http://localhost:4000/api/goals", {
+        oldGoal: selectGoal,
+        newGoal: goalText
+    }).then((response) => {
+      alert("Goal modified!");
+      updateGoals();
+    });
+  });
 
+const deleteButton = (document.getElementById("deleteGoalButton").onclick =
+function (event) {
+    event.preventDefault();
+  const selectGoal = document.getElementById('goals-modify').value;
+  console.log(selectGoal);
+  axios.delete("http://localhost:4000/api/goals", {
+      params:{
+          goal: selectGoal
+      }
+  }).then((response) => {
+    alert("Goal deleted!");
+    updateGoals();
+  });
+});
