@@ -60,7 +60,6 @@ const submitGoalButton = (document.getElementById("submitGoalButton").onclick =
     axios.post("http://localhost:4000/api/goals", {
         goals: [goalText]
     }).then((response) => {
-      alert("Goal added!");
       updateGoals();
     });
   });
@@ -74,7 +73,6 @@ const modifyGoalButton = (document.getElementById("modifyGoalButton").onclick =
         oldGoal: currentSelectedGoal,
         newGoal: newGoalText
     }).then((response) => {
-      alert("Goal modified!");
       updateGoals();
     });
   });
@@ -89,7 +87,6 @@ function (event) {
         goal: currentSelectedGoal
       }
   }).then((response) => {
-    alert("Goal deleted!");
     updateGoals();
   });
 });

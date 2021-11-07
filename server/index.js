@@ -70,12 +70,8 @@ app.put(
   (modifyGoal = (req, res) => {
     let { oldGoal, newGoal } = req.body;
     const goalIndex = savedGoals.indexOf(oldGoal);
-    if (goalIndex > -1) {
       savedGoals.splice(goalIndex, 1, newGoal);
       res.status(200).send();
-      return;
-    }
-    res.status(404).send();
   })
 );
 
@@ -85,12 +81,8 @@ app.delete(
     let {goal} = req.query;
     console.log(goal)
     const goalIndex = savedGoals.indexOf(goal);
-    if (goalIndex > -1) {
       savedGoals.splice(goalIndex, 1);
       res.status(200).send();
-      return;
-    }
-    res.status(404).send();
   })
 
 app.listen(4000, () => console.log("Server running on 4000"));
