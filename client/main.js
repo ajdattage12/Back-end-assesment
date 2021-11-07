@@ -20,7 +20,7 @@ let inspirationButton = (document.getElementById("inspirationButton").onclick =
       .get("http://localhost:4000/api/inspiration")
       .then(function (response) {
         const inspirationDisplay = document.getElementById("inspirational-quotes");
-        const inspirationList = document.createElement("ul");
+        const inspirationList = document.createElement("ol");
         const inspirationQuotes = response.data;
         inspirationQuotes.forEach(quote => {
             const quoteItem = document.createElement("li");
@@ -68,11 +68,11 @@ const submitGoalButton = (document.getElementById("submitGoalButton").onclick =
 const modifyGoalButton = (document.getElementById("modifyGoalButton").onclick =
   function (event) {
       event.preventDefault();
-    const goalText = document.getElementById('goals').value;
-    const selectGoal = document.getElementById('goals-modify').value;
+    const newGoalText = document.getElementById('goals').value;
+    const currentSelectedGoal = document.getElementById('goals-modify').value;
     axios.put("http://localhost:4000/api/goals", {
-        oldGoal: selectGoal,
-        newGoal: goalText
+        oldGoal: currentSelectedGoal,
+        newGoal: newGoalText
     }).then((response) => {
       alert("Goal modified!");
       updateGoals();
@@ -82,11 +82,11 @@ const modifyGoalButton = (document.getElementById("modifyGoalButton").onclick =
 const deleteButton = (document.getElementById("deleteGoalButton").onclick =
 function (event) {
     event.preventDefault();
-  const selectGoal = document.getElementById('goals-modify').value;
-  console.log(selectGoal);
+  const currentSelectedGoal = document.getElementById('goals-modify').value;
+//   console.log(currentSelectedGoal);
   axios.delete("http://localhost:4000/api/goals", {
       params:{
-          goal: selectGoal
+        goal: currentSelectedGoal
       }
   }).then((response) => {
     alert("Goal deleted!");
